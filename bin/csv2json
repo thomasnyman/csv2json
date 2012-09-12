@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+# encoding: utf-8
+import csv
+import json
+import sys
+from optparse import OptionParser
+
+def main():
+    """Handles command line option parsing and csv2json procedure invocation."""
+    usage = "usage: %prog [OPTION...] [FILE]"
+    parser = OptionParser(usage)
+
+    parser.add_option('-o', '--outfile',
+                      dest='outfile',
+                      help='write output to OUTFILE')
+
+    (options, args) = parser.parse_args()
+
+    try:
+        infile = open(args[0], 'r') if len(args) > 0 else sys.stdin
+        outfile = open(options.outfile, 'w') if options.outfile != None else sys.stdout
+
+        csv2json(infile, outfile)
+    
+    except IOError as e:
+        parser.error("I/O error({0}): {1}: {2}".format(e.errno, args[0], e.strerror))
+    
+    finally:
+        if infile: infile.close()
+        if outfile: outfile.close()
+
+def csv2json(infile, outfile):
+    """
+    Reads CSV formatted data from infile and writes JSON formatted data to outfile.
+
+    :infile: Input CSV file
+    :outfile: Output JSON file
+    :returns: None
+    """
+    reader = csv.DictReader(infile)
+    json.dump([row for row in reader], fp=outfile)
+
+if __name__ == '__main__':
+    main()
