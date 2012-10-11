@@ -14,13 +14,29 @@ def main():
                       dest='outfile',
                       help='write output to OUTFILE')
 
+    parser.add_option('-f', '--fieldnames',
+                      dest='fieldnames',
+                      help='comma separated list of field names, if omitted the first row of FILE will be used as fieldnames')
+
+    parser.add_option('-i', '--indent',
+                      dest='indent',
+                      default=None,
+                      type='int',
+                      help='integer specifying indent level for pretty-printing, if zero or negative only newlines will be inserted')
+
+    parser.add_option('-e', '--encoding',
+                      dest='encoding',
+                      default='UTF-8',
+                      help='use specified ENCODING [default %default]')
+
     (options, args) = parser.parse_args()
 
     try:
         infile = open(args[0], 'r') if len(args) > 0 else sys.stdin
         outfile = open(options.outfile, 'w') if options.outfile != None else sys.stdout
+        fieldnames = options.fieldnames.split(',') if options.fieldnames != None else None
 
-        csv2json(infile, outfile)
+        csv2json(infile, outfile, fieldnames, options.indent, options.encoding)
     
     except IOError as e:
         parser.error("I/O error({0}): {1}: {2}".format(e.errno, args[0], e.strerror))
@@ -29,16 +45,22 @@ def main():
         if infile: infile.close()
         if outfile: outfile.close()
 
-def csv2json(infile, outfile):
+def csv2json(infile, outfile, fieldnames=None, indent=None, encoding='UTF-8'):
     """
     Reads CSV formatted data from infile and writes JSON formatted data to outfile.
 
-    :infile: Input CSV file
-    :outfile: Output JSON file
-    :returns: None
+    :infile:     Input CSV file.
+    :outfile:    Output JSON file.
+    :fieldnames: List of CSV field names. 
+                 If omitted the first row of infile will be used as fieldnames.
+    :indent:     Integer specifying indent level for pretty-printing. 
+                 If zero or negative only newlines will be inserted. 
+                 None (the default) disables pretty-printing.
+    :encoding:   Infile encoding, default is UTF-8.
+    :returns:    None
     """
-    reader = csv.DictReader(infile)
-    json.dump([row for row in reader], fp=outfile)
+    reader = csv.DictReader(infile, fieldnames=fieldnames)
+    json.dump([row for row in reader], fp=outfile, indent=indent, encoding=encoding)
 
 if __name__ == '__main__':
     main()

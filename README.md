@@ -12,16 +12,21 @@ Description
 -----------
 
 The `csv2json` script reads CSV formatted data and outputs it into an JSON array
-of objects. The values in the first row of the CSV data will be used as
-fieldnames.
+of objects. By default the values in the first row of the CSV data will be used
+as fieldnames.
 
 Options
 -------
 
 Mandatory arguments for long options are mandatory for short options too
 
-      -o, --outfile=OUTFILE  write output to OUTFILE
-      -h, --help             show this help message and exit
+      -o, --outfile=OUTFILE        write output to OUTFILE
+      -h, --help                   show this help message and exit
+      -f, --fieldnames FIELDNAMES  comma separated list of field names, if omitted the
+                                   first row of FILE will be used as fieldnames
+      -i, --indent INDENT          integer specifying indent level for pretty-printing,
+                                   if zero or negative only newlines will be inserted
+      -e, --encoding ENCODING      use specified ENCODING [default UTF-8]
 
 Examples
 --------
